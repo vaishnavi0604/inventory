@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
-import controller.userController as usrc
+import userController as usrc
 import av  
 from PIL import Image
 import torch
