@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
-import userController as usrc
+import controller.userController as usrc
 import av  
 from PIL import Image
 import torch
@@ -10,12 +10,13 @@ import time
 usrc.create()
 @st.cache
 def model():
-    return torch.hub.load('ultralytics/yolov5', 'custom', path="model.pt",force_reload=True) 
+    return torch.hub.load('ultralytics/yolov5', 'custom', path="best.pt",force_reload=True) 
 
 model=model()
 class VideoProcessor:
     def _init_(self):
         self.res=None
+        self.confidence=0.5
 
     def getRes(self):
         #time.sleep(5)
@@ -23,6 +24,7 @@ class VideoProcessor:
 
     def recv(self, frame):
  
+        model.conf=self.confidence
         img = frame.to_ndarray(format="bgr24")
         
         # vision processing
@@ -39,7 +41,7 @@ class VideoProcessor:
 
 st.title("Cold Drinks Inventory Management System")
 
-modes=['Staff','Admin']
+modes=['None','Staff','Admin']
 option=st.selectbox('Mode',modes)
 
 if option=='Staff':
@@ -47,6 +49,8 @@ if option=='Staff':
 
     with st.sidebar:
         date = st.date_input('Date')
+
+        confidence=st.slider('Confidence threshold',0.00,1.00,0.8)
 
         vmodes=['📹video','📊data','🖼️image']
         view_mode=st.radio('View Mode',vmodes)
@@ -76,6 +80,7 @@ if option=='Staff':
             st.title("🖼️ Object detection image")
             image=st.file_uploader('Image',type=['png','jpg','jpeg'])
             if image:
+                model.conf=confidence
                 img = np.array(Image.open(image))
 
                 # model processing
@@ -105,6 +110,8 @@ if option=='Staff':
                 video_processor_factory=VideoProcessor,
                 async_processing=True,
             )
+            if webrtc_ctx.state.playing:
+                    webrtc_ctx.video_processor.confidence=confidence
             if st.checkbox('Show the detected labels'):
                 empty=st.empty()
                 store=st.button('Store')
@@ -123,7 +130,13 @@ if option=='Staff':
                                 empty.write("No labels detected")  
                         else:
                             break
-else:
+                            
+ else:
     st.header("Admin")
-    choice=['View inventory','create','delete']
+    choice=['View inventory','update product','delete product','Create user']
     mode=st.selectbox(" ",choice)
+    if mode=='View inventory':
+        table=usrc.read()
+        st.table(table)
+        count=usrc.count_drinks()
+        st.table(count)
