@@ -131,12 +131,3 @@ if option=='Staff':
                         else:
                             break
                             
- else:
-      st.header("Admin")
-      choice=['View inventory','update product','delete product','Create user']
-       mode=st.selectbox(" ",choice)
-       if mode=='View inventory':
-        table=usrc.read()
-        st.table(table)
-        count=usrc.count_drinks()
-        st.table(count)
