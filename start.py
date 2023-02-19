@@ -41,7 +41,7 @@ class VideoProcessor:
 
 st.title("Cold Drinks Inventory Management System")
 
-modes=['None','Staff','Admin']
+modes=['None','Staff']
 option=st.selectbox('Mode',modes)
 
 if option=='Staff':
