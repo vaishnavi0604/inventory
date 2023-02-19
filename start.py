@@ -52,16 +52,16 @@ if option=='Staff':
 
         confidence=st.slider('Confidence threshold',0.00,1.00,0.8)
 
-        vmodes=['📹video','📊data','🖼️image']
+        vmodes=['📹Video','📊Data','🖼️Image']
         view_mode=st.radio('View Mode',vmodes)
 
-        if view_mode=='📊data':
+        if view_mode=='📊Data':
             dmodes=['None','Excel','CSV']
             download_mode=st.radio('Download Mode',dmodes)
 
     with st.container():
-        if view_mode=='📊data':
-            st.title('📊data')
+        if view_mode=='📊Data':
+            st.title('📊Data')
 
             table=usrc.read()
             st.table(table)
@@ -76,8 +76,8 @@ if option=='Staff':
                 usrc.excelformat(table)
                 st.write('Data is written successfully to Excel File.')
 
-        if view_mode=='🖼️image':
-            st.title("🖼️ Object detection image")
+        if view_mode=='🖼️Image':
+            st.title("🖼️ OBJECT DETECTION USING IMAGE")
             image=st.file_uploader('Image',type=['png','jpg','jpeg'])
             if image:
                 model.conf=confidence
@@ -97,8 +97,8 @@ if option=='Staff':
                         usrc.insert(date,row,int(count[row]))
     
 
-        if view_mode=='📹video':
-            st.title('📹Object detection video')
+        if view_mode=='📹Video':
+            st.title('📹OBJECT DETECTION USING VIDEO STREAMING')
 
             RTC_CONFIGURATION = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
             
